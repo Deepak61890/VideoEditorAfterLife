@@ -1101,104 +1101,47 @@ private fun ExportDialog(
     val viewModel = viewModel { VideoEditorViewModel() }
     val outputPath by viewModel.outputPath.collectAsState()
     var exportString: String? by remember { mutableStateOf(null) }
-
     var showExportProgress by remember { mutableStateOf(false) }
+    exportSettings.setMediaToExportString("Video and Audio")
+    exportSettings.setHdrModeString("Keep HDR")
+    exportSettings.setAudioMimeTypeString("Original")
+    exportSettings.setVideoMimeTypeString("Original")
 
-    if (showExportProgress) {
-        println("VIDEDITOR-> 1119 $showExportProgress")
+    val transformerListener: Listener =
+        object : Listener {
+            override fun onError(
+                composition: Composition, result: ExportResult,
+                exception: ExportException
+            ) {
+                exportString = exception.toString()
+              //  showExportProgress = false  // Hide the dialog on error
 
-        ExportProgressDialog(transformManager) {
-            showExportProgress = false
-            onDismissRequest()
-            val galURI = MyUtilsVideo.saved_vid_uri
-            println("VIDEDITOR-> recorded_vid_uri-> $galURI")
-
-            /*val intent =
-                Intent(context, VideoEditorActivity::class.java).apply {
-                    action = Intent.ACTION_EDIT
-                    data = galURI
-                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                }
-            context.startActivity(intent)*/
+                Log.e("open-video-editor", "Export exception: ", exception)
+            }
         }
-    } else {
-        println("VIDEDITOR-> 1126 $showExportProgress")
-
+    val onFFmpegError: () -> Unit = {
+      //  showExportProgress = false
+        exportString = context.getString(R.string.ffmpeg_error)
     }
+    transformManager.export(
+        context,
+        exportSettings,
+        transformerListener,
+    )
+    ExportProgressDialog(transformManager) {
+     //   showExportProgress = false
+        onDismissRequest()
+        val galURI = MyUtilsVideo.saved_vid_uri
+        println("VIDEDITOR-> recorded_vid_uri-> $galURI")
 
-    ListDialog(
-        title = stringResource(R.string.export),
-        dismissText = stringResource(R.string.cancel),
-        acceptText = "Save",
-        onDismissRequest = onDismissRequest,
-        onAcceptRequest = {
-            showExportProgress = true  // Activate the progress dialog
-
-            /*val exportDismissRequest = {
-                onDismissRequest()
-            }*/
-            val transformerListener: Listener =
-                object : Listener {
-                    override fun onError(
-                        composition: Composition, result: ExportResult,
-                        exception: ExportException
-                    ) {
-                        exportString = exception.toString()
-                        showExportProgress = false  // Hide the dialog on error
-
-                        Log.e("open-video-editor", "Export exception: ", exception)
-                    }
-                }
-            val onFFmpegError: () -> Unit = {
-                showExportProgress = false
-                exportString = context.getString(R.string.ffmpeg_error)
+        /*val intent =
+            Intent(context, VideoEditorActivity::class.java).apply {
+                action = Intent.ACTION_EDIT
+                data = galURI
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             }
-            transformManager.export(
-                context,
-                exportSettings,
-                transformerListener,
-            )
-            //onDismissRequest()
-            System.out.println("VIDEDITOR-> transformManager.export1162 $showExportProgress")
-
-            // ExportProgressDialog(transformManager) { exportDismissRequest() }
-        },
-    ) {
-        item {
-            DropdownSetting(
-                name = stringResource(R.string.media_to_export),
-                options = getMediaToExportStrings()
-            ) {
-                exportSettings.setMediaToExportString(it)
-            }
-        }
-        item {
-            DropdownSetting(
-                name = stringResource(R.string.hdr_mode),
-                options = getHdrModesStrings()
-            ) {
-                exportSettings.setHdrModeString(it)
-            }
-        }
-        item {
-            DropdownSetting(
-                name = stringResource(R.string.audio_type),
-                options = getAudioMimeTypesStrings()
-            ) {
-                exportSettings.setAudioMimeTypeString(it)
-            }
-        }
-        item {
-            DropdownSetting(
-                name = stringResource(R.string.video_type),
-                options = getVideoMimeTypesStrings()
-            ) {
-                exportSettings.setVideoMimeTypeString(it)
-            }
-        }
-
+        context.startActivity(intent)*/
     }
-
 }
 
 @Composable
