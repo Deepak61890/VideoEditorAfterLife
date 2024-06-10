@@ -591,6 +591,9 @@ private fun BottomControls(
     var showFilterBottomSheet by remember { mutableStateOf(false) }
     var showLayerBottomSheet by remember { mutableStateOf(false) }
     var showFrameDialog by remember { mutableStateOf(false) }
+    var isTrim by remember { mutableStateOf(false) }
+    var startTime by remember { mutableStateOf(0L) }
+    var endTime by remember { mutableStateOf(totalDuration()) }
 
     val videoFpm = remember(fpm()) { fpm() }
     val duration = remember(totalDuration()) { totalDuration() }
@@ -629,9 +632,19 @@ private fun BottomControls(
                         )
                         viewModel.setFilterDurationEditorSliderPosition(range)
                         if (prevFilterDurationEditorSliderPosition.start != filterDurationEditorSliderPosition.start) {
-                            onSeekChanged(range.start)
+                            //onSeekChanged(range.start)
+                            if (range.start <= duration.toFloat() / 2) {
+                                startTime = range.start.toLong()
+                            } else {
+                                endTime = range.start.toLong()
+                            }
                         } else {
-                            onSeekChanged(range.endInclusive)
+                           // onSeekChanged(range.endInclusive)
+                            if (range.endInclusive <= duration.toFloat() / 2) {
+                                startTime = range.endInclusive.toLong()
+                            } else {
+                                endTime = range.endInclusive.toLong()
+                            }
                         }
                     },
                     colors = SliderDefaults.colors(
@@ -659,11 +672,24 @@ private fun BottomControls(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier
-                    .weight(2f, false),
-                text = videoTime.formatMinSec() + "/" + duration.formatMinSec()
-            )
+            if (isTrim){
+                Text(
+                    modifier = Modifier
+                        .weight(2f, false),
+                    text = "Start Time: " + startTime.formatMinSec()
+                )
+                Text(
+                    modifier = Modifier
+                        .weight(2f, false),
+                    text = "End Time: " + endTime.formatMinSec()
+                )
+            }else{
+                Text(
+                    modifier = Modifier
+                        .weight(2f, false),
+                    text = videoTime.formatMinSec()+"/"+ duration.formatMinSec()
+                )
+            }
             /*Row(
                 modifier = Modifier.weight(2f, false),
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -746,6 +772,7 @@ private fun BottomControls(
                     }
                     IconButton(modifier = Modifier.weight(1f), onClick = {
                         showFilterBottomSheet = true
+                        isTrim = true
                     }
                     ) {
                         Icon(
