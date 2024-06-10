@@ -673,6 +673,9 @@ private fun BottomControls(
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (isTrim){
+                if(endTime.toInt()==0){
+                    endTime=duration
+                }
                 Text(
                     modifier = Modifier
                         .weight(2f, false),
@@ -737,6 +740,7 @@ private fun BottomControls(
                     modifier = Modifier.weight(1f),
                     acceptDescription = stringResource(R.string.accept_filter),
                     acceptOnClick = {
+                        isTrim=false
                         val currentEditingEffectLocal = currentEditingEffect
                         if (currentEditingEffectLocal != null) {
                             currentEditingEffectLocal.runCallback()
@@ -755,6 +759,7 @@ private fun BottomControls(
                     declineOnClick = {
                         viewModel.setCurrentEditingEffect(null)
                         viewModel.setFilterDurationEditorEnabled(false)
+                        isTrim=false
                     }
                 )
             } else {
