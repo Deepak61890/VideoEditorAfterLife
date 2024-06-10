@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Настройки</string>
+    <string name="text">Текст</string>
+    <string name="speed">Скорость</string>
+    <string name="project">Проект</string>
+    <string name="export">Экспорт</string>
+    <string name="cancel">Отмена</string>
+    <string name="error">Ошибка</string>
+    <string name="theme">Тема</string>
+    <string name="video">Видео</string>
+    <string name="add">Добавить</string>
+    <string name="resolution">Разрешение</string>
+    <string name="size">Размер</string>
+    <string name="back">Назад</string>
+    <string name="select_a_file_to_edit">Выберите файл для редактирования</string>
+    <string name="background_color">Цвет фона</string>
+    <string name="font">Шрифт</string>
+</resources>
