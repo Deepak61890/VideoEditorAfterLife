@@ -20,6 +20,9 @@ class VideoEditorViewModel : ViewModel() {
     private val _controlsVisible = MutableStateFlow(true)
     val controlsVisible: StateFlow<Boolean> = _controlsVisible.asStateFlow()
 
+    private val _insideTrim = MutableStateFlow(false)
+    val insideTrim: StateFlow<Boolean> = _insideTrim.asStateFlow()
+
     private val _projectSavingSupported = MutableStateFlow(true)
     val projectSavingSupported: StateFlow<Boolean> = _projectSavingSupported.asStateFlow()
 
@@ -60,6 +63,9 @@ class VideoEditorViewModel : ViewModel() {
         _controlsVisible.update { value }
     }
 
+    fun setInsideTrim(value: Boolean) {
+        _insideTrim.update { value }
+    }
     fun setProjectSavingSupported(value: Boolean) {
         _projectSavingSupported.update { value }
     }

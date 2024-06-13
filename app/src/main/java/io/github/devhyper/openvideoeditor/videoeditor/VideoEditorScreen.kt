@@ -591,7 +591,6 @@ private fun BottomControls(
     var showFilterBottomSheet by remember { mutableStateOf(false) }
     var showLayerBottomSheet by remember { mutableStateOf(false) }
     var showFrameDialog by remember { mutableStateOf(false) }
-    var isTrim by remember { mutableStateOf(false) }
     var startTime by remember { mutableStateOf(0L) }
     var endTime by remember { mutableStateOf(totalDuration()) }
 
@@ -603,6 +602,8 @@ private fun BottomControls(
 
     val viewModel = viewModel { VideoEditorViewModel() }
 
+
+    val isTrim by viewModel.insideTrim.collectAsState()
     val currentEditingEffect by viewModel.currentEditingEffect.collectAsState()
 
     val filterDurationEditorEnabled by viewModel.filterDurationEditorEnabled.collectAsState()
@@ -740,7 +741,7 @@ private fun BottomControls(
                     modifier = Modifier.weight(1f),
                     acceptDescription = stringResource(R.string.accept_filter),
                     acceptOnClick = {
-                        isTrim=false
+                        viewModel.setInsideTrim(false)
                         startTime=0
                         endTime=0
                         val currentEditingEffectLocal = currentEditingEffect
@@ -761,7 +762,7 @@ private fun BottomControls(
                     declineOnClick = {
                         viewModel.setCurrentEditingEffect(null)
                         viewModel.setFilterDurationEditorEnabled(false)
-                        isTrim=false
+                        viewModel.setInsideTrim(false)
                     }
                 )
             } else {
@@ -779,7 +780,7 @@ private fun BottomControls(
                     }
                     IconButton(modifier = Modifier.weight(1f), onClick = {
                         showFilterBottomSheet = true
-                        isTrim = true
+                        viewModel.setInsideTrim(true)
                     }
                     ) {
                         Icon(
@@ -796,7 +797,7 @@ private fun BottomControls(
             modifier = Modifier.fillMaxSize(),
             onDismissRequest = {
                 showFilterBottomSheet = false
-                isTrim=false
+                viewModel.setInsideTrim(false)
             },
             sheetState = filterSheetState
         ) {
