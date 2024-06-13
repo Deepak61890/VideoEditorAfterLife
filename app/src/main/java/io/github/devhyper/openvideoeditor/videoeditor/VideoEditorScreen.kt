@@ -632,14 +632,14 @@ private fun BottomControls(
                         )
                         viewModel.setFilterDurationEditorSliderPosition(range)
                         if (prevFilterDurationEditorSliderPosition.start != filterDurationEditorSliderPosition.start) {
-                            //onSeekChanged(range.start)
+                            onSeekChanged(range.start)
                             if (range.start <= duration.toFloat() / 2) {
                                 startTime = range.start.toLong()
                             } else {
                                 endTime = range.start.toLong()
                             }
                         } else {
-                           // onSeekChanged(range.endInclusive)
+                            onSeekChanged(range.endInclusive)
                             if (range.endInclusive <= duration.toFloat() / 2) {
                                 startTime = range.endInclusive.toLong()
                             } else {
@@ -741,6 +741,8 @@ private fun BottomControls(
                     acceptDescription = stringResource(R.string.accept_filter),
                     acceptOnClick = {
                         isTrim=false
+                        startTime=0
+                        endTime=0
                         val currentEditingEffectLocal = currentEditingEffect
                         if (currentEditingEffectLocal != null) {
                             currentEditingEffectLocal.runCallback()
@@ -794,6 +796,7 @@ private fun BottomControls(
             modifier = Modifier.fillMaxSize(),
             onDismissRequest = {
                 showFilterBottomSheet = false
+                isTrim=false
             },
             sheetState = filterSheetState
         ) {
